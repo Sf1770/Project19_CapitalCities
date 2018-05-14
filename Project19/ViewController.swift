@@ -25,9 +25,28 @@ class ViewController: UIViewController, MKMapViewDelegate {
         let nyc = Capital(title: "New York City", coordinate: CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060), info: "Known as the Big Apple. \n Birthplace of Hip-Hop.")
         let houston = Capital(title: "Houston", coordinate: CLLocationCoordinate2D(latitude: 29.7604, longitude: -95.3698), info: "Birthplace of Beyonce!")
         
+        mapView.addAnnotations([london,oslo,paris,rome,washington,portland, nyc, houston])
         
         
-      mapView.addAnnotations([london,oslo,paris,rome,washington,portland, nyc, houston])
+        
+//        let ac = UIAlertController(title: "Map View Style", message: "Select the style you want to view the map in.", preferredStyle: .actionSheet)
+//        
+//        let action1 = UIAlertAction(title: "Satellite", style: .default){
+//            (action: UIAlertAction) in
+//            self.mapView.mapType = .satellite
+//        }
+//        let action2 = UIAlertAction(title: "Standard", style: .default){
+//            (action: UIAlertAction) in self.mapView.mapType = .standard
+//        }
+//        let action3 = UIAlertAction(title: "Hybrid", style: .default){
+//            (action: UIAlertAction) in self.mapView.mapType = .hybrid
+//        }
+//        
+//        ac.addAction(action1)
+//        ac.addAction(action2)
+//        ac.addAction(action3)
+//        
+//        self.present(ac, animated: true, completion: nil)
         
     }
     
@@ -38,37 +57,72 @@ class ViewController: UIViewController, MKMapViewDelegate {
         //2, checks to see whether the annotation we're creating a view for is 1 of our Capital objects
         if annotation is Capital{
             //3, Try to dequeue an annotation view from the map view's pool of unused views
-            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
             
             if annotationView == nil {
                 //4, If not able to find a reusable view, creates a new one using MKPinAnnotationView and set is canShowCallout property to true, triggers the popup with the city name
                 annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-                annotationView!.canShowCallout = true
+                annotationView?.canShowCallout = true
                 
                 
                 //5, creates a UIButton using built-in .detailDisclosure type(aka small blue "i" symbol with a circle around it)
                 let btn = UIButton(type: .detailDisclosure)
-                annotationView!.rightCalloutAccessoryView = btn
+                annotationView?.rightCalloutAccessoryView = btn
+                
+                let fav = UIButton(type: .system)
+                annotationView?.leftCalloutAccessoryView = fav
+    
             } else{
                 //6, if it can reuse a view, update that view to use a different annotation
-                annotationView!.annotation = annotation
+                annotationView?.annotation = annotation
             }
             return annotationView
         }
         //7, returns nil if annotation isnt from a capital city
         return nil
     }
+
+
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        let capital = view.annotation as! Capital
-        let placeName = capital.title
-        let placeInfo = capital.info
-        
-        let ac = UIAlertController(title: placeName, message: placeInfo, preferredStyle: .alert)
-        ac.addAction(UIAlertAction(title: "OK", style: .default))
-        present(ac,animated: true)
+        if control == view.rightCalloutAccessoryView{
+            let capital = view.annotation as! Capital
+            let placeName = capital.title
+            let placeInfo = capital.info
+            
+            let ac = UIAlertController(title: placeName, message: placeInfo, preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default))
+            present(ac,animated: true)
+        } else if control == view.leftCalloutAccessoryView{
+            let pin = view.annotation as? MKPinAnnotationView
+            pin?.pinTintColor = UIColor.green
+        }
     }
+    
+    
 
-
+    @IBAction func selectMapView(_ sender: UIButton) {
+        let ac = UIAlertController(title: "Map View Style", message: "Select the style you want to view the map in.", preferredStyle: .actionSheet)
+        
+        let action1 = UIAlertAction(title: "Satellite", style: .default){
+            (action: UIAlertAction) in
+            self.mapView.mapType = .satellite
+        }
+        let action2 = UIAlertAction(title: "Standard", style: .default){
+            (action: UIAlertAction) in self.mapView.mapType = .standard
+        }
+        let action3 = UIAlertAction(title: "Hybrid", style: .default){
+            (action: UIAlertAction) in self.mapView.mapType = .hybrid
+        }
+        
+        ac.addAction(action1)
+        ac.addAction(action2)
+        ac.addAction(action3)
+        
+        self.present(ac, animated: true, completion: nil)
+        
+        
+    }
+    
 }
 
