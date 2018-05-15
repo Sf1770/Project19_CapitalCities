@@ -16,14 +16,14 @@ class ViewController: UIViewController, MKMapViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        let london = Capital(title: "London", coordinate: CLLocationCoordinate2D(latitude: 51.507222, longitude: -0.1275), info: "Home to the 2012 Summer Olympics.")
-        let oslo = Capital(title: "Oslo", coordinate: CLLocationCoordinate2D(latitude: 59.95, longitude: 10.75), info: "Founded over a thousand years ago.")
-        let paris = Capital(title: "Paris", coordinate: CLLocationCoordinate2D(latitude: 48.8567, longitude: 2.3508), info: "Often called the City of Light.")
-        let rome = Capital(title: "Rome", coordinate: CLLocationCoordinate2D(latitude: 41.9, longitude: 12.5), info: "Has a whole country inside it.")
-        let washington = Capital(title: "Washington DC", coordinate: CLLocationCoordinate2D(latitude: 38.895111, longitude: -77.036667), info: "Named after George himself.")
-        let portland = Capital(title: "Portland", coordinate: CLLocationCoordinate2D(latitude: 45.5231, longitude: -122.67665), info: "Hipster Homeland")
-        let nyc = Capital(title: "New York City", coordinate: CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060), info: "Known as the Big Apple. \n Birthplace of Hip-Hop.")
-        let houston = Capital(title: "Houston", coordinate: CLLocationCoordinate2D(latitude: 29.7604, longitude: -95.3698), info: "Birthplace of Beyonce!")
+        let london = Capital(title: "London", coordinate: CLLocationCoordinate2D(latitude: 51.507222, longitude: -0.1275), subtitle: "Home to the 2012 Summer Olympics.")
+        let oslo = Capital(title: "Oslo", coordinate: CLLocationCoordinate2D(latitude: 59.95, longitude: 10.75), subtitle: "Founded over a thousand years ago.")
+        let paris = Capital(title: "Paris", coordinate: CLLocationCoordinate2D(latitude: 48.8567, longitude: 2.3508), subtitle: "Often called the City of Light.")
+        let rome = Capital(title: "Rome", coordinate: CLLocationCoordinate2D(latitude: 41.9, longitude: 12.5), subtitle: "Has a whole country inside it.")
+        let washington = Capital(title: "Washington DC", coordinate: CLLocationCoordinate2D(latitude: 38.895111, longitude: -77.036667), subtitle: "Named after George himself.")
+        let portland = Capital(title: "Portland", coordinate: CLLocationCoordinate2D(latitude: 45.5231, longitude: -122.67665), subtitle: "Hipster Homeland")
+        let nyc = Capital(title: "New York City", coordinate: CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060), subtitle: "Known as the Big Apple. \n Birthplace of Hip-Hop.")
+        let houston = Capital(title: "Houston", coordinate: CLLocationCoordinate2D(latitude: 29.7604, longitude: -95.3698), subtitle: "Birthplace of Beyonce!")
         
         mapView.addAnnotations([london,oslo,paris,rome,washington,portland, nyc, houston])
         
@@ -66,11 +66,9 @@ class ViewController: UIViewController, MKMapViewDelegate {
                 
                 
                 //5, creates a UIButton using built-in .detailDisclosure type(aka small blue "i" symbol with a circle around it)
-                let btn = UIButton(type: .detailDisclosure)
+                let btn = UIButton(type: .contactAdd)
                 annotationView?.rightCalloutAccessoryView = btn
                 
-                let fav = UIButton(type: .system)
-                annotationView?.leftCalloutAccessoryView = fav
     
             } else{
                 //6, if it can reuse a view, update that view to use a different annotation
@@ -86,17 +84,18 @@ class ViewController: UIViewController, MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         if control == view.rightCalloutAccessoryView{
-            let capital = view.annotation as! Capital
-            let placeName = capital.title
-            let placeInfo = capital.info
-            
-            let ac = UIAlertController(title: placeName, message: placeInfo, preferredStyle: .alert)
-            ac.addAction(UIAlertAction(title: "OK", style: .default))
-            present(ac,animated: true)
-        } else if control == view.leftCalloutAccessoryView{
-            let pin = view.annotation as? MKPinAnnotationView
-            pin?.pinTintColor = UIColor.green
+            let pin = view as! MKPinAnnotationView
+            if pin.pinTintColor != MKPinAnnotationView.greenPinColor(){
+                pin.pinTintColor = MKPinAnnotationView.greenPinColor()
+                print("Turn green")
+            } else{
+                pin.pinTintColor = MKPinAnnotationView.redPinColor()
+                print("Turn red")
+            }
         }
+        
+        //if let, would have shown me that my typecasting is failing
+        
     }
     
     
